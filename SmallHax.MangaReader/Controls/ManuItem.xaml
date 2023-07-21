@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SmallHax.MangaReader.Controls"
+             x:Class="SmallHax.MangaReader.Controls.ManuItem"
+             HeightRequest="64" WidthRequest="64">
+    <Frame CornerRadius="0" BorderColor="Transparent" BackgroundColor="Transparent" Padding="0">
+        <VerticalStackLayout>
+            <controls:SKLabel x:Name="IconLabel" VerticalOptions="Center" HorizontalOptions="Center" FontSize="32" FontFamily="FontAwesome"/>
+            <Label x:Name="Label" VerticalOptions="Center" HorizontalOptions="Center" />
+        </VerticalStackLayout>
+        <Frame.GestureRecognizers>
+            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+        </Frame.GestureRecognizers>
+    </Frame>
+</ContentView>

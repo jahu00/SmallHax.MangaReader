@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SmallHax.MangaReader.Controls"
+             x:Class="SmallHax.MangaReader.MainPage">
+
+    <AbsoluteLayout>
+        <controls:ImageRenderer
+            x:Name="Renderer"
+            AbsoluteLayout.LayoutBounds="0,0,1,1"
+            AbsoluteLayout.LayoutFlags="All"
+            TappedLeft="Renderer_TappedLeft"
+            TappedRight="Renderer_TappedRight"
+            TappedCenter="Renderer_TappedCenter"
+            TappedTop="Renderer_TappedTop"
+            />
+        <Frame x:Name="Menu" BackgroundColor="White" CornerRadius="0" BorderColor="Black" AbsoluteLayout.LayoutBounds="0,0,1,64" AbsoluteLayout.LayoutFlags="WidthProportional" Padding="0">
+            <ScrollView Orientation="Horizontal">
+                <HorizontalStackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                    <controls:ManuItem Text="Open" Icon="{StaticResource FA_FolderOpen}" Tapped="ManuItem_Tapped"/>
+                </HorizontalStackLayout>
+            </ScrollView>
+        </Frame>
+    </AbsoluteLayout>
+
+</ContentPage>
