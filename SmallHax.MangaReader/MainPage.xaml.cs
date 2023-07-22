@@ -105,25 +105,26 @@ public partial class MainPage : ContentPage
 
     private void UpdatePage()
     {
-        var image = imageArchive.GetPage(pageIndex);
+        var image = imageArchive.GetPage(pageIndex, out var pageFileName);
         Renderer.Image = image;
+        PageFileNameLabel.Text = pageFileName;
+        PageCountLabel.Text = $"{pageIndex + 1} / {imageArchive.PageCount}";
     }
 
     private void Renderer_TappedCenter(object sender, TappedEventArgs e)
     {
-        if (imageArchive == null)
-        {
-            return;
-        }
-        if (Menu.IsVisible)
-        {
-            Menu.IsVisible = false;
-        }
+        Progress.IsVisible = false;
+        Menu.IsVisible = false;
     }
 
     private void Renderer_TappedTop(object sender, TappedEventArgs e)
     {
         Menu.IsVisible = true;
+    }
+
+    private void Renderer_TappedBottom(object sender, TappedEventArgs e)
+    {
+        Progress.IsVisible = true;
     }
 }
 

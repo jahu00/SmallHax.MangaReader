@@ -31,7 +31,12 @@ namespace SmallHax.MangaReader.Models
 
         public SKImage GetPage(int i)
         {
-            var pageFileName = pageFileNames[i];
+            return GetPage(i, out var _);
+        }
+
+        public SKImage GetPage(int i, out string pageFileName)
+        {
+            pageFileName = pageFileNames[i];
             var image = GetPageByName(pageFileName);
             return image;
         }

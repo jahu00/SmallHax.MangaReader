@@ -14,14 +14,21 @@
             TappedRight="Renderer_TappedRight"
             TappedCenter="Renderer_TappedCenter"
             TappedTop="Renderer_TappedTop"
+            TappedBottom="Renderer_TappedBottom"
             />
-        <Frame x:Name="Menu" BackgroundColor="White" CornerRadius="0" BorderColor="Black" AbsoluteLayout.LayoutBounds="0,0,1,64" AbsoluteLayout.LayoutFlags="WidthProportional" Padding="0">
+        <Frame x:Name="Menu" BackgroundColor="White" CornerRadius="0" BorderColor="Black" AbsoluteLayout.LayoutBounds="0,0,1,64" AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" Padding="0">
             <ScrollView Orientation="Horizontal">
                 <HorizontalStackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                     <controls:ManuItem Text="Open" Icon="{Static models:FontAwesome.FolderOpen}" Tapped="Open_Tapped" IconFontFamily="FontAwesomeRegular"/>
                     <controls:ManuItem x:Name="DirectionMenuItem" Text="Direction" Icon="{Static models:FontAwesome.ArrowLeft}" Tapped="Direction_Tapped" IconFontFamily="FontAwesome"/>
                 </HorizontalStackLayout>
             </ScrollView>
+        </Frame>
+        <Frame x:Name="Progress" BackgroundColor="White" CornerRadius="0" BorderColor="Black" AbsoluteLayout.LayoutBounds="0,1,1,48" AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" Padding="0" IsVisible="false">
+            <VerticalStackLayout>
+                <Label x:Name="PageFileNameLabel" HorizontalOptions="StartAndExpand"/>
+                <Label x:Name="PageCountLabel" HorizontalOptions="StartAndExpand"/>
+            </VerticalStackLayout>
         </Frame>
     </AbsoluteLayout>
 
