@@ -16,6 +16,7 @@ public partial class MainPage : ContentPage
         _readingDirection = value;
         DirectionMenuItem.Icon = value == Direction.LeftToRight ? FontAwesome.ArrowRight : FontAwesome.ArrowLeft;
         Renderer.ReadingDirection = value;
+        Preferences.Set(nameof(ReadingDirection), value.ToString());
     }
 
     private int pageIndex = 0;
@@ -23,7 +24,11 @@ public partial class MainPage : ContentPage
     public MainPage()
 	{
 		InitializeComponent();
-        ReadingDirection = Direction.LeftToRight;
+        var storedLastReadingDirection = Preferences.Get(nameof(ReadingDirection), Direction.LeftToRight.ToString());
+        if (Enum.TryParse<Direction>(storedLastReadingDirection, out var lastReadingDirection))
+        {
+            ReadingDirection = lastReadingDirection;
+        }
 
     }
 
