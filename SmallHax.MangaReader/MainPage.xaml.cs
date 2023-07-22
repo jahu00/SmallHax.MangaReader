@@ -9,12 +9,13 @@ public partial class MainPage : ContentPage
     private ImageArchive imageArchive;
 
     private Direction _readingDirection;
-    public Direction ReadingDirection { get { return _readingDirection; } set { SetReadingDirection(value); } }
+    public Direction ReadingDirection { get { return _readingDirection; } set { SetReadingDirection(value); base.OnPropertyChanged(); } }
 
     private void SetReadingDirection(Direction value)
     {
         _readingDirection = value;
         DirectionMenuItem.Icon = value == Direction.LeftToRight ? FontAwesome.ArrowRight : FontAwesome.ArrowLeft;
+        Renderer.ReadingDirection = value;
     }
 
     private int pageIndex = 0;
@@ -34,8 +35,8 @@ public partial class MainPage : ContentPage
             return;
         }
         imageArchive = ImageArchive.FromFileName(result.FullPath);
-        var image = imageArchive.GetPage(0);
-        Renderer.SetImage(image);
+        pageIndex = 0;
+        UpdatePage();
     }
 
     private void Direction_Tapped(object sender, TappedEventArgs e)
@@ -58,22 +59,12 @@ public partial class MainPage : ContentPage
         }
         if (ReadingDirection == Direction.LeftToRight)
         {
-            if (pageIndex == 0)
-            {
-                return;
-            }
-            pageIndex--;
+            PreviousPage();
         }
         if (ReadingDirection == Direction.RightToLeft)
         {
-            if (pageIndex == imageArchive.PageCount - 1)
-            {
-                return;
-            }
-            pageIndex++;
+            NextPage();
         }
-        var image = imageArchive.GetPage(pageIndex);
-        Renderer.SetImage(image);
     }
 
     private void Renderer_TappedRight(object sender, TappedEventArgs e)
@@ -84,22 +75,38 @@ public partial class MainPage : ContentPage
         }
         if (ReadingDirection == Direction.RightToLeft)
         {
-            if (pageIndex == 0)
-            {
-                return;
-            }
-            pageIndex--;
+            PreviousPage();
         }
         if (ReadingDirection == Direction.LeftToRight)
         {
-            if (pageIndex == imageArchive.PageCount - 1)
-            {
-                return;
-            }
-            pageIndex++;
+            NextPage();
         }
+    }
+
+    private void NextPage()
+    {
+        if (pageIndex == imageArchive.PageCount - 1)
+        {
+            return;
+        }
+        pageIndex++;
+        UpdatePage();
+    }
+
+    private void PreviousPage()
+    {
+        if (pageIndex == 0)
+        {
+            return;
+        }
+        pageIndex--;
+        UpdatePage();
+    }
+
+    private void UpdatePage()
+    {
         var image = imageArchive.GetPage(pageIndex);
-        Renderer.SetImage(image);
+        Renderer.Image = image;
     }
 
     private void Renderer_TappedCenter(object sender, TappedEventArgs e)

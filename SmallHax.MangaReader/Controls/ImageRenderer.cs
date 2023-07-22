@@ -1,16 +1,21 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Views.Maui;
 using SkiaSharp.Views.Maui.Controls;
+using SmallHax.MangaReader.Models;
+using System.ComponentModel;
 
 namespace SmallHax.MangaReader.Controls
 {
     public class ImageRenderer : SKCanvasView
     {
+        private string[] UpdatablePropertyNames = { nameof(ReadingDirection), nameof(Image) };
+
         private SKImage _image;
 
         private SKPoint offset = new SKPoint(0, 0);
         private SKPoint panStartOffset;
         private PanUpdatedEventArgs panStartEvent;
+        private Direction _readingDirection;
 
         public float Center { get; set; } = 0.10f;
         public float Top { get; set; } = 0.25f;
@@ -22,15 +27,26 @@ namespace SmallHax.MangaReader.Controls
         public event EventHandler<TappedEventArgs> TappedTop;
         public event EventHandler<TappedEventArgs> TappedBottom;
 
+        public Direction ReadingDirection { get { return _readingDirection; } set { _readingDirection = value; base.OnPropertyChanged(); } }
+        public SKImage Image { get { return _image; } set { SetImage(value); base.OnPropertyChanged(); } }
+
         public ImageRenderer() : base()
         {
-            //PropertyChanged += OnPropertyChanged;
+            PropertyChanged += OnPropertyChanged;
             var panGestureRecognizer = new PanGestureRecognizer();
             panGestureRecognizer.PanUpdated += OnPanUpdated;
             GestureRecognizers.Add(panGestureRecognizer);
             var tapGestureRecognizer = new TapGestureRecognizer();
             tapGestureRecognizer.Tapped += OnTapped;
             GestureRecognizers.Add(tapGestureRecognizer);
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (UpdatablePropertyNames.Contains(e.PropertyName))
+            {
+                InvalidateSurface();
+            }
         }
 
         private void OnTapped(object sender, TappedEventArgs e)
@@ -81,7 +97,7 @@ namespace SmallHax.MangaReader.Controls
         protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
         {
             base.OnPaintSurface(e);
-            if (Handler == null || Parent == null || _image == null)
+            if (Handler == null || Parent == null || Image == null)
             {
                 return;
             }
@@ -89,24 +105,27 @@ namespace SmallHax.MangaReader.Controls
             var canvas = e.Surface.Canvas;
             canvas.Clear();
             var matrix = SKMatrix.Identity;
-            if (Width > _image.Width)
+            if (Width > Image.Width)
             {
-                matrix = matrix.PostConcat(SKMatrix.CreateTranslation((float)Width / 2 - _image.Width / 2, 0));
+                matrix = matrix.PostConcat(SKMatrix.CreateTranslation((float)Width / 2 - Image.Width / 2, 0));
+            }
+            else if (ReadingDirection == Direction.RightToLeft)
+            {
+                matrix = matrix.PostConcat(SKMatrix.CreateTranslation((float)Width - Image.Width, 0));
             }
             if (Height > _image.Height)
             {
                 matrix = matrix.PostConcat(SKMatrix.CreateTranslation(0, (float)Height / 2 - _image.Height / 2));
             }
             canvas.SetMatrix(matrix);
-            canvas.DrawImage(_image, offset);
+            canvas.DrawImage(Image, offset);
         }
 
-        public void SetImage(SKImage image)
+        private void SetImage(SKImage image)
         {
             _image = image;
             offset.X = 0;
             offset.Y = 0;
-            InvalidateSurface();
         }
     }
 }
