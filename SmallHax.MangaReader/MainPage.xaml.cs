@@ -8,16 +8,25 @@ public partial class MainPage : ContentPage
 {
     private ImageArchive imageArchive;
 
-    private Direction readingDirection = Direction.LeftToRight;
+    private Direction _readingDirection;
+    public Direction ReadingDirection { get { return _readingDirection; } set { SetReadingDirection(value); } }
+
+    private void SetReadingDirection(Direction value)
+    {
+        _readingDirection = value;
+        DirectionMenuItem.Icon = value == Direction.LeftToRight ? FontAwesome.ArrowRight : FontAwesome.ArrowLeft;
+    }
 
     private int pageIndex = 0;
 
     public MainPage()
 	{
 		InitializeComponent();
-	}
+        ReadingDirection = Direction.LeftToRight;
 
-    private async void ManuItem_Tapped(object sender, TappedEventArgs e)
+    }
+
+    private async void Open_Tapped(object sender, TappedEventArgs e)
     {
         var result = await FilePicker.PickAsync(PickOptions.Default);
         if (result == null)
@@ -29,9 +38,16 @@ public partial class MainPage : ContentPage
         Renderer.SetImage(image);
     }
 
-    private void OnPanUpdated(object sender, PanUpdatedEventArgs e)
+    private void Direction_Tapped(object sender, TappedEventArgs e)
     {
-        Renderer.OnPanUpdated(this, e);
+        if (ReadingDirection == Direction.LeftToRight)
+        {
+            ReadingDirection = Direction.RightToLeft;
+        }
+        else
+        {
+            ReadingDirection = Direction.LeftToRight;
+        }
     }
 
     private void Renderer_TappedLeft(object sender, TappedEventArgs e)
@@ -40,7 +56,7 @@ public partial class MainPage : ContentPage
         {
             return;
         }
-        if (readingDirection == Direction.LeftToRight)
+        if (ReadingDirection == Direction.LeftToRight)
         {
             if (pageIndex == 0)
             {
@@ -48,7 +64,7 @@ public partial class MainPage : ContentPage
             }
             pageIndex--;
         }
-        if (readingDirection == Direction.RightToLeft)
+        if (ReadingDirection == Direction.RightToLeft)
         {
             if (pageIndex == imageArchive.PageCount - 1)
             {
@@ -66,7 +82,7 @@ public partial class MainPage : ContentPage
         {
             return;
         }
-        if (readingDirection == Direction.RightToLeft)
+        if (ReadingDirection == Direction.RightToLeft)
         {
             if (pageIndex == 0)
             {
@@ -74,7 +90,7 @@ public partial class MainPage : ContentPage
             }
             pageIndex--;
         }
-        if (readingDirection == Direction.LeftToRight)
+        if (ReadingDirection == Direction.LeftToRight)
         {
             if (pageIndex == imageArchive.PageCount - 1)
             {

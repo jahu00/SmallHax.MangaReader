@@ -50,12 +50,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Resources\Fonts\FontAwesome.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiFont Remove="Resources\Fonts\FontAwesome.ttf" />
-	  <MauiFont Remove="Resources\Fonts\FontAwesome.xaml" />
+	  <MauiFont Remove="Resources\Fonts\FontAwesomeRegular.ttf" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <EmbeddedResource Include="Resources\Fonts\FontAwesome.ttf" />
+	  <EmbeddedResource Include="Resources\Fonts\FontAwesomeRegular.ttf" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -71,12 +76,6 @@
 	  <Compile Update="Controls\TapArea.xaml.cs">
 	    <DependentUpon>TapArea.xaml</DependentUpon>
 	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiXaml Update="Resources\Fonts\FontAwesome.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>

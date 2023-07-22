@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:SmallHax.MangaReader.Controls"
+             xmlns:models="clr-namespace:SmallHax.MangaReader.Models"
              x:Class="SmallHax.MangaReader.MainPage">
 
     <AbsoluteLayout>
@@ -17,7 +18,8 @@
         <Frame x:Name="Menu" BackgroundColor="White" CornerRadius="0" BorderColor="Black" AbsoluteLayout.LayoutBounds="0,0,1,64" AbsoluteLayout.LayoutFlags="WidthProportional" Padding="0">
             <ScrollView Orientation="Horizontal">
                 <HorizontalStackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                    <controls:ManuItem Text="Open" Icon="{StaticResource FA_FolderOpen}" Tapped="ManuItem_Tapped"/>
+                    <controls:ManuItem Text="Open" Icon="{Static models:FontAwesome.FolderOpen}" Tapped="Open_Tapped" IconFontFamily="FontAwesomeRegular"/>
+                    <controls:ManuItem x:Name="DirectionMenuItem" Text="Direction" Icon="{Static models:FontAwesome.ArrowLeft}" Tapped="Direction_Tapped" IconFontFamily="FontAwesome"/>
                 </HorizontalStackLayout>
             </ScrollView>
         </Frame>
