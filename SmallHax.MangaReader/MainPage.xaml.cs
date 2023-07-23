@@ -11,6 +11,13 @@ public partial class MainPage : ContentPage
     private Direction _readingDirection;
     public Direction ReadingDirection { get { return _readingDirection; } set { SetReadingDirection(value); base.OnPropertyChanged(); } }
 
+    private FilePickerFileType fileTypes = new FilePickerFileType(
+        new Dictionary<DevicePlatform, IEnumerable<string>>
+        {
+            { DevicePlatform.WinUI, new[] { ".cbz", ".zip" } }, // file extension
+        }
+    );
+
     private void SetReadingDirection(Direction value)
     {
         _readingDirection = value;
@@ -34,7 +41,11 @@ public partial class MainPage : ContentPage
 
     private async void Open_Tapped(object sender, TappedEventArgs e)
     {
-        var result = await FilePicker.PickAsync(PickOptions.Default);
+        var pickOptions = new PickOptions
+        {
+            FileTypes = fileTypes
+        };
+        var result = await FilePicker.PickAsync(pickOptions);
         if (result == null)
         {
             return;
