@@ -50,9 +50,16 @@ public partial class MainPage : ContentPage
         {
             return;
         }
-        imageArchive = ImageArchive.FromFileName(result.FullPath);
-        pageIndex = 0;
-        UpdatePage();
+        try
+        {
+            imageArchive = ImageArchive.FromFileName(result.FullPath);
+            pageIndex = 0;
+            UpdatePage();
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"There was an error oppening file: {result.FullPath}", "OK");
+        }
     }
 
     private void Direction_Tapped(object sender, TappedEventArgs e)
