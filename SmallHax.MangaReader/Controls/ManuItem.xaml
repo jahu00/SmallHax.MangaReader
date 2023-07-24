@@ -6,7 +6,7 @@
              HeightRequest="64" WidthRequest="64">
     <Frame CornerRadius="0" BorderColor="Transparent" BackgroundColor="Transparent" Padding="0">
         <VerticalStackLayout>
-            <controls:SKLabel x:Name="IconLabel" VerticalOptions="Center" HorizontalOptions="Center" FontSize="32"/>
+            <controls:SKLabel x:Name="IconLabel" VerticalOptions="Center" HorizontalOptions="Center" FontSize="32" LineHeight="1.25"/>
             <Label x:Name="Label" VerticalOptions="Center" HorizontalOptions="Center" />
         </VerticalStackLayout>
         <Frame.GestureRecognizers>

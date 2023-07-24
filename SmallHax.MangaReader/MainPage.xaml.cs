@@ -45,20 +45,19 @@ public partial class MainPage : ContentPage
         {
             FileTypes = fileTypes
         };
-        var result = await FilePicker.PickAsync(pickOptions);
-        if (result == null)
+        var filePckerResult = await FilePicker.PickAsync(pickOptions);
+        if (filePckerResult == null)
         {
             return;
         }
         try
         {
-            imageArchive = ImageArchive.FromFileName(result.FullPath);
-            pageIndex = 0;
-            UpdatePage();
+            imageArchive = ImageArchive.FromFileName(filePckerResult.FullPath);
+            GoToPage(0);
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"There was an error oppening file: {result.FullPath}", "OK");
+            await DisplayAlert("Error", $"There was an error oppening file: {filePckerResult.FullPath}", "OK");
         }
     }
 
@@ -112,8 +111,7 @@ public partial class MainPage : ContentPage
         {
             return;
         }
-        pageIndex++;
-        UpdatePage();
+        GoToPage(pageIndex + 1);
     }
 
     private void PreviousPage()
@@ -122,7 +120,17 @@ public partial class MainPage : ContentPage
         {
             return;
         }
-        pageIndex--;
+        GoToPage(pageIndex - 1);
+    }
+
+    private async void GoToPage(int i)
+    {
+        if (i < 0 || i >= imageArchive.PageCount)
+        {
+            await DisplayAlert("Error", $"Invalid page number: {i + 1}", "OK");
+            return;
+        }
+        pageIndex = i;
         UpdatePage();
     }
 
@@ -148,6 +156,26 @@ public partial class MainPage : ContentPage
     private void Renderer_TappedBottom(object sender, TappedEventArgs e)
     {
         Progress.IsVisible = true;
+    }
+
+    private async void Progress_Tapped(object sender, TappedEventArgs e)
+    {
+        if (imageArchive == null)
+        {
+            return;
+        }
+        var promptResult = await DisplayPromptAsync("Go to page", $"Select 1-{imageArchive.PageCount}", initialValue: (pageIndex + 1).ToString(), keyboard: Keyboard.Numeric);
+        // Detect if cancel was pressed
+        if (promptResult == null)
+        {
+            return;
+        }
+        if (!int.TryParse(promptResult, out var newPageNumber))
+        {
+            await DisplayAlert("Error", $"Page number was not in correct format: {promptResult}", "OK");
+            return;
+        }
+        GoToPage(newPageNumber - 1);
     }
 }
 

@@ -10,19 +10,21 @@ namespace SmallHax.MangaReader.Controls
 {
     public class SKLabel : SKCanvasView
     {
-        private string[] UpdatablePropertyNames = { nameof(Text), nameof(Width), nameof(Height), nameof(FontSize), nameof(FontFamily), nameof(Parent), nameof(Color), nameof(Parent), nameof(Handler) };
+        private string[] UpdatablePropertyNames = { nameof(Text), nameof(Width), nameof(Height), nameof(FontSize), nameof(FontFamily), nameof(Parent), nameof(Color), nameof(Parent), nameof(Handler), nameof(LineHeight) };
         private string[] PaintPropertyNames = { nameof(FontSize), nameof(FontFamily), nameof(Color), nameof(Width), nameof(Height), nameof(Handler) };
         private ISKFontManager _fontManager;
         private double _fontSize;
         private string _fontFamily;
         private Color _color = Colors.Black;
         private SKPaint _paint;
+        private double _lineHeight = 1;
 
         //private readonly TapGestureRecognizer tapGestureRecognizer;
 
         private string _text { get; set; }
         public string Text { get { return _text; } set { _text = value; base.OnPropertyChanged(); } }
         public double FontSize { get { return _fontSize; } set { _fontSize = value; base.OnPropertyChanged(); } }
+        public double LineHeight { get { return _lineHeight; } set { _lineHeight = value; base.OnPropertyChanged(); } }
         public string FontFamily { get { return _fontFamily; } set { _fontFamily = value; base.OnPropertyChanged(); } }
         public Color Color { get { return _color;  } set { _color = value; base.OnPropertyChanged(); } }
 
@@ -58,7 +60,7 @@ namespace SmallHax.MangaReader.Controls
                 var font = _fontManager.Get($"{FontFamily}.ttf");
                 _paint = new SKPaint(font) { ColorF = new SKColorF(_color.Red, _color.Green, _color.Blue, _color.Alpha), TextSize = (float)_fontSize };
                 WidthRequest = _paint.MeasureText(Text);
-                HeightRequest = FontSize;
+                HeightRequest = FontSize * LineHeight;
             }
             if (UpdatablePropertyNames.Contains(e.PropertyName))
             {
