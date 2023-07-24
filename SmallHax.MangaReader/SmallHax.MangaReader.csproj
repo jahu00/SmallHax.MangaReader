@@ -13,10 +13,10 @@
 		<WindowsPackageType>None</WindowsPackageType>
 
 		<!-- Display name -->
-		<ApplicationTitle>SmallHax.MangaReader</ApplicationTitle>
+		<ApplicationTitle>MangaReader</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.smallhax.mangareader</ApplicationId>
+		<ApplicationId>smallhax.mangareader</ApplicationId>
 		<ApplicationIdGuid>99a10e22-6a7b-465c-8778-111e2ff68f9b</ApplicationIdGuid>
 
 		<!-- Versions -->

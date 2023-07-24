@@ -2,6 +2,8 @@ using System.ComponentModel;
 
 namespace SmallHax.MangaReader.Controls;
 
+// TODO: This is unused and is prime candidate for removal
+
 public partial class TapArea : ContentView
 {
     private string _text;
