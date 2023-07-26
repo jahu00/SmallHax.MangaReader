@@ -73,16 +73,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Controls\TapArea.xaml.cs">
-	    <DependentUpon>TapArea.xaml</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <MauiXaml Update="Controls\ManuItem.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Controls\TapArea.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

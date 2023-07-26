@@ -1,6 +1,7 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Views.Maui;
 using SkiaSharp.Views.Maui.Controls;
+using SkiaSharp.Views.Maui.Handlers;
 using SmallHax.MangaReader.Models;
 using System.ComponentModel;
 
@@ -8,13 +9,18 @@ namespace SmallHax.MangaReader.Controls
 {
     public class ImageRenderer : SKCanvasView
     {
-        private string[] UpdatablePropertyNames = { nameof(ReadingDirection), nameof(Image) };
+        private string[] UpdatablePropertyNames = { nameof(ReadingDirection), nameof(Image), nameof(Zoom) };
 
         private SKImage _image;
 
         private SKPoint offset = new SKPoint(0, 0);
         private SKPoint panStartOffset;
         private PanUpdatedEventArgs panStartEvent;
+
+        private float zoom = 1f;
+        private float pinchStartZoom = 1f;
+        private PinchGestureUpdatedEventArgs pinchStartEvent;
+
         private Direction _readingDirection;
 
         public float Center { get; set; } = 0.10f;
@@ -28,6 +34,9 @@ namespace SmallHax.MangaReader.Controls
         public event EventHandler<TappedEventArgs> TappedBottom;
 
         public Direction ReadingDirection { get { return _readingDirection; } set { _readingDirection = value; base.OnPropertyChanged(); } }
+
+        public float Zoom { get { return zoom; } set { zoom = value; base.OnPropertyChanged(); } }
+
         public SKImage Image { get { return _image; } set { SetImage(value); base.OnPropertyChanged(); } }
 
         public ImageRenderer() : base()
@@ -36,9 +45,12 @@ namespace SmallHax.MangaReader.Controls
             var panGestureRecognizer = new PanGestureRecognizer();
             panGestureRecognizer.PanUpdated += OnPanUpdated;
             GestureRecognizers.Add(panGestureRecognizer);
-            var tapGestureRecognizer = new TapGestureRecognizer();
+            var tapGestureRecognizer = new TapGestureRecognizer { Buttons = ButtonsMask.Primary };
             tapGestureRecognizer.Tapped += OnTapped;
             GestureRecognizers.Add(tapGestureRecognizer);
+            var pinchGestureRecognizer = new PinchGestureRecognizer();
+            pinchGestureRecognizer.PinchUpdated += OnPinchUpdated;
+            GestureRecognizers.Add(pinchGestureRecognizer);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -94,6 +106,21 @@ namespace SmallHax.MangaReader.Controls
             InvalidateSurface();
         }
 
+        private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
+        {
+            if (e.Status == GestureStatus.Completed)
+            {
+                Zoom = (float)Math.Round(Zoom, 2);
+                return;
+            }
+            if (e.Status == GestureStatus.Started)
+            {
+                pinchStartEvent = e;
+                pinchStartZoom = zoom;
+            }
+            Zoom = pinchStartZoom * (float)(e.Scale - pinchStartEvent.Scale);
+        }
+
         protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
         {
             base.OnPaintSurface(e);
@@ -105,20 +132,27 @@ namespace SmallHax.MangaReader.Controls
             var canvas = e.Surface.Canvas;
             canvas.Clear();
             var matrix = SKMatrix.Identity;
-            if (Width > Image.Width)
+            var zoomedWidth = Image.Width * zoom;
+            var zoomedHeight = Image.Height * zoom;
+            if (zoom != 1)
             {
-                matrix = matrix.PostConcat(SKMatrix.CreateTranslation((float)Width / 2 - Image.Width / 2, 0));
+                matrix = matrix.PostConcat(SKMatrix.CreateScale(zoom, zoom));
+            }
+            matrix = matrix.PostConcat(SKMatrix.CreateTranslation(offset.X, offset.Y));
+            if (Width > zoomedWidth)
+            {
+                matrix = matrix.PostConcat(SKMatrix.CreateTranslation((float)Width / 2 - zoomedWidth / 2, 0));
             }
             else if (ReadingDirection == Direction.RightToLeft)
             {
-                matrix = matrix.PostConcat(SKMatrix.CreateTranslation((float)Width - Image.Width, 0));
+                matrix = matrix.PostConcat(SKMatrix.CreateTranslation((float)Width - zoomedWidth, 0));
             }
-            if (Height > _image.Height)
+            if (Height > zoomedHeight)
             {
-                matrix = matrix.PostConcat(SKMatrix.CreateTranslation(0, (float)Height / 2 - _image.Height / 2));
+                matrix = matrix.PostConcat(SKMatrix.CreateTranslation(0, (float)Height / 2 - zoomedHeight / 2));
             }
             canvas.SetMatrix(matrix);
-            canvas.DrawImage(Image, offset);
+            canvas.DrawImage(Image, 0, 0);
         }
 
         private void SetImage(SKImage image)
@@ -126,6 +160,7 @@ namespace SmallHax.MangaReader.Controls
             _image = image;
             offset.X = 0;
             offset.Y = 0;
+            zoom = 1;
         }
     }
 }

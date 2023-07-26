@@ -1,6 +1,4 @@
 ﻿using SmallHax.MangaReader.Models;
-using System.IO.Compression;
-using System.Runtime.CompilerServices;
 
 namespace SmallHax.MangaReader;
 
@@ -176,6 +174,16 @@ public partial class MainPage : ContentPage
             return;
         }
         GoToPage(newPageNumber - 1);
+    }
+
+    private void ZoomIn_Tapped(object sender, TappedEventArgs e)
+    {
+        Renderer.Zoom *= 2;
+    }
+
+    private void ZoomOut_Tapped(object sender, TappedEventArgs e)
+    {
+        Renderer.Zoom /= 2;
     }
 }
 

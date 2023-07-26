@@ -5,7 +5,7 @@
              xmlns:models="clr-namespace:SmallHax.MangaReader.Models"
              x:Class="SmallHax.MangaReader.MainPage">
 
-    <AbsoluteLayout>
+    <AbsoluteLayout x:Name="Layout">
         <controls:ImageRenderer
             x:Name="Renderer"
             AbsoluteLayout.LayoutBounds="0,0,1,1"
@@ -22,6 +22,8 @@
                     <controls:ManuItem Text="Open" Icon="{Static models:FontAwesome.FolderOpen}" Tapped="Open_Tapped" IconFontFamily="FontAwesomeRegular"/>
                     <controls:ManuItem x:Name="DirectionMenuItem" Text="Direction" Icon="{Static models:FontAwesome.ArrowLeft}" Tapped="Direction_Tapped" IconFontFamily="FontAwesome"/>
                     <controls:ManuItem Text="Go to" Icon="{Static models:FontAwesome.Compass}" Tapped="Progress_Tapped" IconFontFamily="FontAwesomeRegular"/>
+                    <controls:ManuItem Text="Zoom in" Icon="{Static models:FontAwesome.Plus}" Tapped="ZoomIn_Tapped" IconFontFamily="FontAwesome"/>
+                    <controls:ManuItem Text="Zoom out" Icon="{Static models:FontAwesome.Minus}" Tapped="ZoomOut_Tapped" IconFontFamily="FontAwesome"/>
                 </HorizontalStackLayout>
             </ScrollView>
         </Frame>
