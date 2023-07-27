@@ -178,12 +178,22 @@ public partial class MainPage : ContentPage
 
     private void ZoomIn_Tapped(object sender, TappedEventArgs e)
     {
-        Renderer.Zoom *= 2;
+        Renderer.ZoomIn();
     }
 
     private void ZoomOut_Tapped(object sender, TappedEventArgs e)
     {
-        Renderer.Zoom /= 2;
+        Renderer.ZoomOut();
+    }
+
+    private void ResetZoom_Tapped(object sender, TappedEventArgs e)
+    {
+        Renderer.ResetZoom();
+    }
+
+    private void FillZoom_Tapped(object sender, TappedEventArgs e)
+    {
+        Renderer.FillZoom();
     }
 }
 

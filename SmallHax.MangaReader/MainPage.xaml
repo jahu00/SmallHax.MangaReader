@@ -20,10 +20,14 @@
             <ScrollView Orientation="Horizontal">
                 <HorizontalStackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                     <controls:ManuItem Text="Open" Icon="{Static models:FontAwesome.FolderOpen}" Tapped="Open_Tapped" IconFontFamily="FontAwesomeRegular"/>
+                    <controls:MenuSpacer/>
                     <controls:ManuItem x:Name="DirectionMenuItem" Text="Direction" Icon="{Static models:FontAwesome.ArrowLeft}" Tapped="Direction_Tapped" IconFontFamily="FontAwesome"/>
                     <controls:ManuItem Text="Go to" Icon="{Static models:FontAwesome.Compass}" Tapped="Progress_Tapped" IconFontFamily="FontAwesomeRegular"/>
+                    <controls:MenuSpacer/>
                     <controls:ManuItem Text="Zoom in" Icon="{Static models:FontAwesome.Plus}" Tapped="ZoomIn_Tapped" IconFontFamily="FontAwesome"/>
                     <controls:ManuItem Text="Zoom out" Icon="{Static models:FontAwesome.Minus}" Tapped="ZoomOut_Tapped" IconFontFamily="FontAwesome"/>
+                    <controls:ManuItem Text="Reset" Icon="{Static models:FontAwesome.ArrowsUpDownLeftRight}" Tapped="ResetZoom_Tapped" IconFontFamily="FontAwesome"/>
+                    <controls:ManuItem Text="Fill" Icon="{Static models:FontAwesome.ArrowsToCircle}" Tapped="FillZoom_Tapped" IconFontFamily="FontAwesome"/>
                 </HorizontalStackLayout>
             </ScrollView>
         </Frame>

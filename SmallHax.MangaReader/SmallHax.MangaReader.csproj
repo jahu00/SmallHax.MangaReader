@@ -73,7 +73,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Controls\MenuSpacer.xaml.cs">
+	    <DependentUpon>MenuSpacer.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Controls\ManuItem.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\MenuSpacer.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
