@@ -18,11 +18,12 @@ namespace SmallHax.MangaReader.Controls
         private SKPoint panStartOffset;
         private PanUpdatedEventArgs panStartEvent;
 
-        private float zoom = 1f;
+        private float _zoom = 1f;
         private float pinchStartZoom = 1f;
         private PinchGestureUpdatedEventArgs pinchStartEvent;
 
         private Direction _readingDirection;
+        private bool _autoZoom;
 
         public float Center { get; set; } = 0.10f;
         public float Top { get; set; } = 0.25f;
@@ -36,9 +37,11 @@ namespace SmallHax.MangaReader.Controls
 
         public Direction ReadingDirection { get { return _readingDirection; } set { _readingDirection = value; base.OnPropertyChanged(); } }
 
-        public float Zoom { get { return zoom; } set { zoom = value; base.OnPropertyChanged(); } }
+        public float Zoom { get { return _zoom; } set { _zoom = value; base.OnPropertyChanged(); } }
 
         public SKImage Image { get { return _image; } set { SetImage(value); base.OnPropertyChanged(); } }
+
+        public bool AutoZoom { get { return _autoZoom; } set { _autoZoom = value; base.OnPropertyChanged(); } }
 
         public ImageRenderer() : base()
         {
@@ -184,7 +187,14 @@ namespace SmallHax.MangaReader.Controls
             _image = image;
             offset.X = 0;
             offset.Y = 0;
-            Zoom = 1;
+            if (_autoZoom)
+            {
+                FillZoom();
+            }
+            else
+            {
+                ResetZoom();
+            }
         }
 
         public void ZoomIn()

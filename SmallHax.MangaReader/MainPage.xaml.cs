@@ -9,12 +9,23 @@ public partial class MainPage : ContentPage
     private Direction _readingDirection;
     public Direction ReadingDirection { get { return _readingDirection; } set { SetReadingDirection(value); base.OnPropertyChanged(); } }
 
+    private bool _autoZoom;
+    public bool AutoZoom { get { return _autoZoom; } set { SetAutoZoom(value); base.OnPropertyChanged(); } }
+
     private FilePickerFileType fileTypes = new FilePickerFileType(
         new Dictionary<DevicePlatform, IEnumerable<string>>
         {
             { DevicePlatform.WinUI, new[] { ".cbz", ".zip" } }, // file extension
         }
     );
+
+    private void SetAutoZoom(bool value)
+    {
+        _autoZoom = value;
+        AutoZoomMenuItem.Icon = value ? FontAwesome.SquareCheck : FontAwesome.Square;
+        Renderer.AutoZoom = value;
+        Preferences.Set(nameof(AutoZoom), value.ToString());
+    }
 
     private void SetReadingDirection(Direction value)
     {
@@ -33,6 +44,11 @@ public partial class MainPage : ContentPage
         if (Enum.TryParse<Direction>(storedLastReadingDirection, out var lastReadingDirection))
         {
             ReadingDirection = lastReadingDirection;
+        }
+        var storedAutoZoom = Preferences.Get(nameof(ReadingDirection), Direction.LeftToRight.ToString());
+        if (bool.TryParse(storedAutoZoom, out var autoZoom))
+        {
+            AutoZoom = autoZoom;
         }
 
     }
@@ -194,6 +210,11 @@ public partial class MainPage : ContentPage
     private void FillZoom_Tapped(object sender, TappedEventArgs e)
     {
         Renderer.FillZoom();
+    }
+
+    private void AutoZoom_Tapped(object sender, TappedEventArgs e)
+    {
+        AutoZoom = !AutoZoom;
     }
 }
 

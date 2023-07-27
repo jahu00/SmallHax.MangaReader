@@ -28,6 +28,7 @@
                     <controls:ManuItem Text="Zoom out" Icon="{Static models:FontAwesome.Minus}" Tapped="ZoomOut_Tapped" IconFontFamily="FontAwesome"/>
                     <controls:ManuItem Text="Reset" Icon="{Static models:FontAwesome.ArrowsUpDownLeftRight}" Tapped="ResetZoom_Tapped" IconFontFamily="FontAwesome"/>
                     <controls:ManuItem Text="Fill" Icon="{Static models:FontAwesome.ArrowsToCircle}" Tapped="FillZoom_Tapped" IconFontFamily="FontAwesome"/>
+                    <controls:ManuItem x:Name="AutoZoomMenuItem" Text="Auto" Icon="{Static models:FontAwesome.Square}" Tapped="AutoZoom_Tapped" IconFontFamily="FontAwesomeRegular"/>
                 </HorizontalStackLayout>
             </ScrollView>
         </Frame>
