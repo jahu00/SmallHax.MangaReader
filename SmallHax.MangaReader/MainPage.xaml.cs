@@ -1,9 +1,17 @@
 ﻿using SmallHax.MangaReader.Models;
+using SmallHax.Maui.Helpers;
 
 namespace SmallHax.MangaReader;
 
 public partial class MainPage : ContentPage
 {
+    private FilePickerFileType fileTypes = new FilePickerFileType(
+        new Dictionary<DevicePlatform, IEnumerable<string>>
+        {
+            { DevicePlatform.WinUI, new[] { ".cbz", ".zip" } }, // file extension
+        }
+    );
+
     private ImageArchive imageArchive;
 
     private Direction _readingDirection;
@@ -12,12 +20,11 @@ public partial class MainPage : ContentPage
     private bool _autoZoom;
     public bool AutoZoom { get { return _autoZoom; } set { SetAutoZoom(value); base.OnPropertyChanged(); } }
 
-    private FilePickerFileType fileTypes = new FilePickerFileType(
-        new Dictionary<DevicePlatform, IEnumerable<string>>
-        {
-            { DevicePlatform.WinUI, new[] { ".cbz", ".zip" } }, // file extension
-        }
-    );
+    private bool _restore;
+    public bool Restore { get { return _restore; } set { SetRestore(value); base.OnPropertyChanged(); } }
+
+    private string LastFileName { get; set; }
+    private int LastPageIndex { get; set; }
 
     private void SetAutoZoom(bool value)
     {
@@ -25,6 +32,13 @@ public partial class MainPage : ContentPage
         AutoZoomMenuItem.Icon = value ? FontAwesome.SquareCheck : FontAwesome.Square;
         Renderer.AutoZoom = value;
         Preferences.Set(nameof(AutoZoom), value.ToString());
+    }
+
+    private void SetRestore(bool value)
+    {
+        _restore = value;
+        RestoreMenuItem.Icon = value ? FontAwesome.SquareCheck : FontAwesome.Square;
+        Preferences.Set(nameof(Restore), value.ToString());
     }
 
     private void SetReadingDirection(Direction value)
@@ -40,17 +54,20 @@ public partial class MainPage : ContentPage
     public MainPage()
 	{
 		InitializeComponent();
-        var storedLastReadingDirection = Preferences.Get(nameof(ReadingDirection), Direction.LeftToRight.ToString());
-        if (Enum.TryParse<Direction>(storedLastReadingDirection, out var lastReadingDirection))
-        {
-            ReadingDirection = lastReadingDirection;
-        }
-        var storedAutoZoom = Preferences.Get(nameof(ReadingDirection), Direction.LeftToRight.ToString());
-        if (bool.TryParse(storedAutoZoom, out var autoZoom))
-        {
-            AutoZoom = autoZoom;
-        }
+        ReadingDirection = PreferencesHelper.GetEnum(nameof(ReadingDirection), Direction.LeftToRight);
+        AutoZoom = Preferences.Get(nameof(AutoZoom), false);
+        Restore = Preferences.Get(nameof(Restore), true);
+        Restore = Preferences.Get(nameof(Restore), true);
+        LastFileName = Preferences.Get(nameof(LastFileName), null);
+        LastPageIndex = Preferences.Get(nameof(LastPageIndex), 0);
+    }
 
+    private async void ContentPage_Loaded(object sender, EventArgs e)
+    {
+        if (Restore && File.Exists(LastFileName))
+        {
+            await TryOpen(LastFileName, LastPageIndex);
+        }
     }
 
     private async void Open_Tapped(object sender, TappedEventArgs e)
@@ -64,14 +81,25 @@ public partial class MainPage : ContentPage
         {
             return;
         }
+        await TryOpen(filePckerResult.FullPath);
+    }
+
+    private async Task TryOpen(string path, int newPageIndex = 0)
+    {
         try
         {
-            imageArchive = ImageArchive.FromFileName(filePckerResult.FullPath);
-            GoToPage(0);
+            Spinner.IsVisible = true;
+            imageArchive = ImageArchive.FromFileName(path);
+            Preferences.Set(nameof(LastFileName), path);
+            GoToPage(newPageIndex);
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"There was an error oppening file: {filePckerResult.FullPath}", "OK");
+            await DisplayAlert("Error", $"There was an error oppening file: {path}", "OK");
+        }
+        finally
+        {
+            Spinner.IsVisible = false;
         }
     }
 
@@ -145,6 +173,7 @@ public partial class MainPage : ContentPage
             return;
         }
         pageIndex = i;
+        Preferences.Set(nameof(LastPageIndex), pageIndex);
         UpdatePage();
     }
 
@@ -215,6 +244,20 @@ public partial class MainPage : ContentPage
     private void AutoZoom_Tapped(object sender, TappedEventArgs e)
     {
         AutoZoom = !AutoZoom;
+    }
+
+    private void Restore_Tapped(object sender, TappedEventArgs e)
+    {
+        Restore = !Restore;
+    }
+
+    private void ContentPage_SizeChanged(object sender, EventArgs e)
+    {
+        if (!AutoZoom)
+        {
+            return;
+        }
+        Renderer.FillZoom();
     }
 }
 

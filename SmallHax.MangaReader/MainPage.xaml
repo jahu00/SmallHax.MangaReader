@@ -2,8 +2,11 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:SmallHax.MangaReader.Controls"
+             xmlns:sharedControls="clr-namespace:SmallHax.Maui.Controls;assembly=SmallHax.Maui"
              xmlns:models="clr-namespace:SmallHax.MangaReader.Models"
-             x:Class="SmallHax.MangaReader.MainPage">
+             x:Class="SmallHax.MangaReader.MainPage"
+             Loaded="ContentPage_Loaded"
+             SizeChanged="ContentPage_SizeChanged">
 
     <AbsoluteLayout x:Name="Layout">
         <controls:ImageRenderer
@@ -29,6 +32,8 @@
                     <controls:ManuItem Text="Reset" Icon="{Static models:FontAwesome.ArrowsUpDownLeftRight}" Tapped="ResetZoom_Tapped" IconFontFamily="FontAwesome"/>
                     <controls:ManuItem Text="Fill" Icon="{Static models:FontAwesome.ArrowsToCircle}" Tapped="FillZoom_Tapped" IconFontFamily="FontAwesome"/>
                     <controls:ManuItem x:Name="AutoZoomMenuItem" Text="Auto" Icon="{Static models:FontAwesome.Square}" Tapped="AutoZoom_Tapped" IconFontFamily="FontAwesomeRegular"/>
+                    <controls:MenuSpacer/>
+                    <controls:ManuItem x:Name="RestoreMenuItem" Text="Restore" Icon="{Static models:FontAwesome.Square}" Tapped="Restore_Tapped" IconFontFamily="FontAwesomeRegular"/>
                 </HorizontalStackLayout>
             </ScrollView>
         </Frame>
@@ -41,6 +46,7 @@
                 <TapGestureRecognizer Tapped="Progress_Tapped"/>
             </Frame.GestureRecognizers>
         </Frame>
+        <sharedControls:Spinner AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" x:Name="Spinner" IsVisible="False"/>
     </AbsoluteLayout>
 
 </ContentPage>

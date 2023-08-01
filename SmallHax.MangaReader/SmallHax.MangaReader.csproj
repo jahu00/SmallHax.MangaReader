@@ -69,6 +69,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\SmallHax.Maui\SmallHax.Maui.csproj" />
 	  <ProjectReference Include="..\SmallHax.Utils\SmallHax.Utils.csproj" />
 	</ItemGroup>
 
