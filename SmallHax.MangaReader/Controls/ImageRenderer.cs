@@ -60,7 +60,7 @@ namespace SmallHax.MangaReader.Controls
         protected override void OnHandlerChanged()
         {
             base.OnHandlerChanged();
-//#if WINDOWS
+#if WINDOWS
               var view = Handler.PlatformView as SkiaSharp.Views.Windows.SKXamlCanvas;
               view.PointerWheelChanged += (s, e) =>
               {
@@ -77,7 +77,7 @@ namespace SmallHax.MangaReader.Controls
                 }
                 ZoomOut();
             };
-//#endif
+#endif
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -157,8 +157,9 @@ namespace SmallHax.MangaReader.Controls
             }
 
             var canvas = e.Surface.Canvas;
+            //canvas.TotalMatrix
             canvas.Clear();
-            var matrix = SKMatrix.Identity;
+            var matrix = canvas.TotalMatrix;// SKMatrix.Identity;
             var zoomedWidth = Image.Width * Zoom;
             var zoomedHeight = Image.Height * Zoom;
             if (Zoom != 1)
@@ -225,7 +226,7 @@ namespace SmallHax.MangaReader.Controls
                 return;
             }
             var rendererProportions = Width / Height;
-            var imageProportions = Image.Width / Image.Height;
+            var imageProportions = (double)Image.Width / (double)Image.Height;
             if (rendererProportions > imageProportions)
             {
                 Zoom = (float)Height / Image.Height;

@@ -3,5 +3,5 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SmallHax.MangaReader.Controls.MenuSpacer"
              Margin="10">
-    <Frame CornerRadius="0" BorderColor="Black" BackgroundColor="Transparent" Padding="0" HeightRequest="44" WidthRequest="1"/>
+    <Label VerticalOptions="Center" HorizontalOptions="Center" FontSize="16" Text="|"/>
 </ContentView>

@@ -9,6 +9,7 @@ public partial class MainPage : ContentPage
         new Dictionary<DevicePlatform, IEnumerable<string>>
         {
             { DevicePlatform.WinUI, new[] { ".cbz", ".zip" } }, // file extension
+            { DevicePlatform.Android, new[] { "application/vnd.comicbook+zip", "application/zip" } }, // MIME type
         }
     );
 
@@ -55,9 +56,8 @@ public partial class MainPage : ContentPage
 	{
 		InitializeComponent();
         ReadingDirection = PreferencesHelper.GetEnum(nameof(ReadingDirection), Direction.LeftToRight);
-        AutoZoom = Preferences.Get(nameof(AutoZoom), false);
-        Restore = Preferences.Get(nameof(Restore), true);
-        Restore = Preferences.Get(nameof(Restore), true);
+        AutoZoom = PreferencesHelper.GetBool(nameof(AutoZoom), false);
+        Restore = PreferencesHelper.GetBool(nameof(Restore), true);
         LastFileName = Preferences.Get(nameof(LastFileName), null);
         LastPageIndex = Preferences.Get(nameof(LastPageIndex), 0);
     }
