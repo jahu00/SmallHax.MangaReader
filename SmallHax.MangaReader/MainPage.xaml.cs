@@ -64,6 +64,11 @@ public partial class MainPage : ContentPage
 
     private async void ContentPage_Loaded(object sender, EventArgs e)
     {
+        var readPermissionStatus = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
+        if (readPermissionStatus != PermissionStatus.Granted)
+        {
+            await Permissions.RequestAsync<Permissions.StorageRead>();
+        }
         if (Restore && File.Exists(LastFileName))
         {
             await TryOpen(LastFileName, LastPageIndex);

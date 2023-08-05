@@ -19,8 +19,6 @@ namespace SmallHax.MangaReader.Controls
         private PanUpdatedEventArgs panStartEvent;
 
         private float _zoom = 1f;
-        private float pinchStartZoom = 1f;
-        private PinchGestureUpdatedEventArgs pinchStartEvent;
 
         private Direction _readingDirection;
         private bool _autoZoom;
@@ -49,7 +47,7 @@ namespace SmallHax.MangaReader.Controls
             var panGestureRecognizer = new PanGestureRecognizer();
             panGestureRecognizer.PanUpdated += OnPanUpdated;
             GestureRecognizers.Add(panGestureRecognizer);
-            var tapGestureRecognizer = new TapGestureRecognizer { Buttons = ButtonsMask.Primary };
+            var tapGestureRecognizer = new TapGestureRecognizer { Buttons = ButtonsMask.Primary, NumberOfTapsRequired = 1 };
             tapGestureRecognizer.Tapped += OnTapped;
             GestureRecognizers.Add(tapGestureRecognizer);
             var pinchGestureRecognizer = new PinchGestureRecognizer();
@@ -64,6 +62,10 @@ namespace SmallHax.MangaReader.Controls
               var view = Handler.PlatformView as SkiaSharp.Views.Windows.SKXamlCanvas;
               view.PointerWheelChanged += (s, e) =>
               {
+                if (Image == null)
+                {
+                    return;
+                }
                 var point = e.GetCurrentPoint(view);
                 var wheelDelta = point.Properties.MouseWheelDelta;
                 var position = new SKPoint((float)point.Position.X, (float)point.Position.Y);
@@ -119,6 +121,10 @@ namespace SmallHax.MangaReader.Controls
 
         public void OnPanUpdated(object sender, PanUpdatedEventArgs e)
         {
+            if (Image == null)
+            {
+                return;
+            }
             if (e.StatusType == GestureStatus.Completed)
             {
                 InvalidateSurface();
@@ -136,17 +142,27 @@ namespace SmallHax.MangaReader.Controls
 
         private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
         {
+            if (Image == null)
+            {
+                return;
+            }
+
+            if (e.Status == GestureStatus.Started)
+            {
+                return;
+            }
+            var startZoom = Zoom;
             if (e.Status == GestureStatus.Completed)
             {
                 Zoom = (float)Math.Round(Zoom, 2);
-                return;
             }
-            if (e.Status == GestureStatus.Started)
+            else
             {
-                pinchStartEvent = e;
-                pinchStartZoom = Zoom;
+                Zoom = Zoom * (float)e.Scale;
             }
-            Zoom = pinchStartZoom * (float)(e.Scale - pinchStartEvent.Scale);
+            //Console.WriteLine($"{e.ScaleOrigin.X}, {(float)e.ScaleOrigin.Y}");
+            PostZoomAdjustOffset(new SKPoint((float)(e.ScaleOrigin.X * Width), (float)(e.ScaleOrigin.Y * Height)), startZoom);
+
         }
 
         protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
@@ -159,12 +175,17 @@ namespace SmallHax.MangaReader.Controls
 
             var canvas = e.Surface.Canvas;
             canvas.Clear();
-            var matrix = canvas.TotalMatrix;
+            var matrix = SKMatrix.Identity;
             if (Zoom != 1)
             {
                 matrix = matrix.PostConcat(SKMatrix.CreateScale(Zoom, Zoom));
             }
             matrix = matrix.PostConcat(SKMatrix.CreateTranslation(offset.X, offset.Y));
+            var density = (float)DeviceDisplay.MainDisplayInfo.Density;
+            if (density != 1)
+            {
+                matrix = matrix.PostConcat(SKMatrix.CreateScale(density, density));
+            }
 
             actualOffset.X = matrix.TransX;
             actualOffset.Y = matrix.TransY;

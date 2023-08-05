@@ -18,7 +18,7 @@
             TappedCenter="Renderer_TappedCenter"
             TappedTop="Renderer_TappedTop"
             TappedBottom="Renderer_TappedBottom"
-            IgnorePixelScaling="True"
+            IgnorePixelScaling="False"
             />
         <Frame x:Name="Menu" BackgroundColor="White" CornerRadius="0" BorderColor="Black" AbsoluteLayout.LayoutBounds="0,0,1,64" AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" Padding="0">
             <ScrollView Orientation="Horizontal">
