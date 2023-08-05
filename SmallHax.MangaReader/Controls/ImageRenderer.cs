@@ -1,7 +1,6 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Views.Maui;
 using SkiaSharp.Views.Maui.Controls;
-using SkiaSharp.Views.Maui.Handlers;
 using SmallHax.MangaReader.Models;
 using System.ComponentModel;
 
@@ -15,6 +14,7 @@ namespace SmallHax.MangaReader.Controls
         private SKImage _image;
 
         private SKPoint offset = new SKPoint(0, 0);
+        private SKPoint actualOffset = new SKPoint(0, 0);
         private SKPoint panStartOffset;
         private PanUpdatedEventArgs panStartEvent;
 
@@ -66,16 +66,17 @@ namespace SmallHax.MangaReader.Controls
               {
                 var point = e.GetCurrentPoint(view);
                 var wheelDelta = point.Properties.MouseWheelDelta;
+                var position = new SKPoint((float)point.Position.X, (float)point.Position.Y);
                 if (wheelDelta == 0)
                 {
                     return;
                 }
                 if (wheelDelta > 0)
                 {
-                    ZoomIn();
+                    ZoomIn(position);
                     return;
                 }
-                ZoomOut();
+                ZoomOut(position);
             };
 #endif
         }
@@ -157,28 +158,16 @@ namespace SmallHax.MangaReader.Controls
             }
 
             var canvas = e.Surface.Canvas;
-            //canvas.TotalMatrix
             canvas.Clear();
-            var matrix = canvas.TotalMatrix;// SKMatrix.Identity;
-            var zoomedWidth = Image.Width * Zoom;
-            var zoomedHeight = Image.Height * Zoom;
+            var matrix = canvas.TotalMatrix;
             if (Zoom != 1)
             {
                 matrix = matrix.PostConcat(SKMatrix.CreateScale(Zoom, Zoom));
             }
             matrix = matrix.PostConcat(SKMatrix.CreateTranslation(offset.X, offset.Y));
-            if (Width > zoomedWidth)
-            {
-                matrix = matrix.PostConcat(SKMatrix.CreateTranslation((float)Width / 2 - zoomedWidth / 2, 0));
-            }
-            else if (ReadingDirection == Direction.RightToLeft)
-            {
-                matrix = matrix.PostConcat(SKMatrix.CreateTranslation((float)Width - zoomedWidth, 0));
-            }
-            if (Height > zoomedHeight)
-            {
-                matrix = matrix.PostConcat(SKMatrix.CreateTranslation(0, (float)Height / 2 - zoomedHeight / 2));
-            }
+
+            actualOffset.X = matrix.TransX;
+            actualOffset.Y = matrix.TransY;
             canvas.SetMatrix(matrix);
             canvas.DrawImage(Image, 0, 0, paint);
         }
@@ -186,8 +175,6 @@ namespace SmallHax.MangaReader.Controls
         private void SetImage(SKImage image)
         {
             _image = image;
-            offset.X = 0;
-            offset.Y = 0;
             if (_autoZoom)
             {
                 FillZoom();
@@ -198,25 +185,75 @@ namespace SmallHax.MangaReader.Controls
             }
         }
 
-        public void ZoomIn()
+        private void AutoOffset()
         {
-            Zoom += 0.1f;
-            Zoom = (float)Math.Round(Zoom, 1);
+            offset.X = 0;
+            offset.Y = 0;
+            var zoomedWidth = Image.Width * Zoom;
+            var zoomedHeight = Image.Height * Zoom;
+            if (Width > zoomedWidth)
+            {
+                offset.X += (float)Width / 2 - zoomedWidth / 2;
+            }
+            else if (ReadingDirection == Direction.RightToLeft)
+            {
+                offset.X += (float)Width - zoomedWidth;
+            }
+            if (Height > zoomedHeight)
+            {
+                offset.Y += (float)Height / 2 - zoomedHeight / 2;
+            }
         }
 
-        public void ZoomOut()
+        public void ZoomIn(SKPoint? origin = null)
         {
+            if (origin == null)
+            {
+                origin = actualOffset;
+            }
+            var startZoom = Zoom;
+            Zoom += 0.1f;
+            Zoom = (float)Math.Round(Zoom, 1);
+            PostZoomAdjustOffset(origin, startZoom);
+        }
+
+        private void PostZoomAdjustOffset(SKPoint? origin, float startZoom)
+        {
+            var zeroBasedOffset = origin.Value - actualOffset;
+            var startZoomedWidth = Image.Width * startZoom;
+            var startZoomedHeight = Image.Height * startZoom;
+            var zoomedWidth = Image.Width * Zoom;
+            var zoomedHeight = Image.Height * Zoom;
+            var proportionalX = zeroBasedOffset.X / startZoomedWidth;
+            var proportionalY = zeroBasedOffset.Y / startZoomedHeight;
+            var newX = proportionalX * zoomedWidth;
+            var newY = proportionalY * zoomedHeight;
+            var offsetDeltaX = newX - zeroBasedOffset.X;
+            var offsetDeltaY = newY - zeroBasedOffset.Y;
+            offset.X -= offsetDeltaX;
+            offset.Y -= offsetDeltaY;
+        }
+
+        public void ZoomOut(SKPoint? origin = null)
+        {
+            if (origin == null)
+            {
+                origin = actualOffset;
+            }
+            var startZoom = Zoom;
             Zoom -= 0.1f;
             Zoom = (float)Math.Round(Zoom, 1);
             if (Zoom < 0.1f)
             {
                 Zoom = 0.1f;
             }
+            PostZoomAdjustOffset(origin, startZoom);
         }
 
         public void ResetZoom()
         {
             Zoom = 1;
+            AutoOffset();
         }
 
         public void FillZoom()
@@ -230,9 +267,12 @@ namespace SmallHax.MangaReader.Controls
             if (rendererProportions > imageProportions)
             {
                 Zoom = (float)Height / Image.Height;
-                return;
             }
-            Zoom = (float)Width / Image.Width;
+            else
+            {
+                Zoom = (float)Width / Image.Width;
+            }
+            AutoOffset();
         }
     }
 }
